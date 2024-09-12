@@ -1,13 +1,19 @@
 import { Route, Routes } from 'react-router-dom';
 // Pages
 import HomePage from './pages/HomePage';
+// Modals
+import CookieConsentModal from './components/modals/CookieConsentModal';
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" index element={<HomePage />} />
-    </Routes>
-  )
+    <>
+      <CookieConsentModal />
+
+      <Routes>
+        <Route path='/' index element={<HomePage />} />
+      </Routes>
+    </>
+  );
 }
 
 export default App;
