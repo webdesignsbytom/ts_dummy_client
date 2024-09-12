@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-// Component
-import Navbar from '../../components/nav/Navbar';
 // Context
-import { useUser } from '../../context/UserContext';
+import { useUser } from '../context/UserContext';
 
 const HomePage: React.FC = () => {
   const { user, setUser } = useUser();
