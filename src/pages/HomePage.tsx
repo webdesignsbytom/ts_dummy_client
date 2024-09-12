@@ -1,19 +1,14 @@
 import React, { useState } from 'react';
 // Context
 import { useUser } from '../context/UserContext';
+import Navbar from '../components/nav/Navbar';
 
 const HomePage: React.FC = () => {
   const { user, setUser } = useUser();
 
-  const [number, setNumber] = useState(1);
-
-  const increment = () => setNumber((prevNumber) => prevNumber + 1);
-  const decrement = () => {
-    setNumber((prevNumber) => prevNumber - 1);
-  };
-
   return (
     <div className='home'>
+      <Navbar />
 home
     </div>
   );

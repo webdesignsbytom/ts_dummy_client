@@ -1,22 +1,17 @@
 import React, { createContext, useState, useContext, ReactNode } from 'react';
-
-interface User {
-  name: string;
-  email: string;
-}
+// Models
+import { TempUserModel, UserModel } from '../models/user/UserModels';
 
 interface UserContextProps {
-  user: User | null;
-  setUser: (user: User | null) => void;
+  user: UserModel | null;
+  setUser: (user: UserModel | null) => void;
 }
 
 const UserContext = createContext<UserContextProps | undefined>(undefined);
 
 export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>({
-    name: 'tom',
-    email: 'tom@gmail.com'
-  });
+
+  const [user, setUser] = useState<UserModel | null>(TempUserModel);
 
   return (
     <UserContext.Provider value={{ user, setUser }}>
