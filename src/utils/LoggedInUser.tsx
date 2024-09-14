@@ -1,4 +1,10 @@
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode, JwtPayload  } from "jwt-decode";
+
+// Define a custom interface for the decoded token payload
+interface DecodedToken extends JwtPayload {
+  id: string; // Add the properties you expect in the JWT
+  exp?: number; // Optional expiration time
+}
 
 export default function LoggedInUser() {
   const loadedToken = localStorage.getItem('token');
@@ -9,8 +15,8 @@ export default function LoggedInUser() {
   }
 
   try {
-    // Decode the token
-    const decoded = jwtDecode(loadedToken);
+    // Decode the token and cast it to the custom interface
+    const decoded = jwtDecode<DecodedToken>(loadedToken); 
     console.log('Decoded >>> LoggedInUser(): ', decoded);
 
     // Optionally: check if token is expired

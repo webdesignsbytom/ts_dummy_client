@@ -1,6 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 // Pages
-import HomePage from './pages/HomePage';
+import HomePage from './pages/home/HomePage';
 // Modals
 import CookieConsentModal from './components/modals/CookieConsentModal';
 

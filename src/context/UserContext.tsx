@@ -1,8 +1,11 @@
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 // Models
 import { TempUserModel, UserModel } from '../models/user/UserModels';
+// Utils
 import LoggedInUser from '../utils/LoggedInUser';
+// Api
 import client from '../api/client';
+// Constants
 import { GET_LOGGED_IN_USER_API, HOME_PAGE_URL } from '../utils/Constants';
 
 interface UserContextProps {

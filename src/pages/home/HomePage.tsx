@@ -1,11 +1,11 @@
 import React from 'react';
 // Analytics
-import { usePageTracking } from '../hooks/useAnalytics';
+import { usePageTracking } from '../../hooks/useAnalytics';
 // Components
-import Navbar from '../components/nav/Navbar';
-import { HelmetItem } from '../components/utils/HelmetItem';
+import Navbar from '../../components/nav/Navbar';
+import { HelmetItem } from '../../components/utils/HelmetItem';
 // Constants
-import { CompanyName } from '../utils/Constants';
+import { CompanyName } from '../../utils/Constants';
 
 const HomePage: React.FC = () => {
   usePageTracking();
