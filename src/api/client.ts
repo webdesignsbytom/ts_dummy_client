@@ -1,56 +1,101 @@
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosError } from 'axios';
 
-const host = process.env.REACT_APP_API_URL as string;
-const tokenKey = process.env.REACT_APP_USER_TOKEN as string;
+const host: string | undefined = process.env.REACT_APP_API_URL;
+const tokenKey: string | undefined = process.env.REACT_APP_USER_TOKEN;
 
-interface Client {
-  get: (path: string) => Promise<AxiosResponse<any>>;
-  post: (path: string, data: any, withToken?: boolean) => Promise<AxiosResponse<any>>;
-  patch: (path: string, data: any, withToken?: boolean) => Promise<AxiosResponse<any>>;
-  delete: (path: string) => Promise<AxiosResponse<any>>;
-}
+// Helper function to get Authorization headers
+const getAuthHeaders = (): Record<string, string> => {
+  const token = tokenKey ? localStorage.getItem(tokenKey) : null;
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
 
-const client: Client = {
-  get: (path: string) => {
-    const url = `${host}${path}`;
-    const headers = {
-      Authorization: `Bearer ${localStorage.getItem(tokenKey)}`,
-    };
+// Error handling function
+const handleError = (error: AxiosError): Promise<never> => {
+  let errorMessage = 'An unexpected error occurred.';
 
-    return axios.get(url, { headers });
-  },
-
-  post: (path: string, data: any, withToken = true) => {
-    const url = `${host}${path}`;
-    const token = localStorage.getItem(tokenKey);
-    let headers: Record<string, string> = {};
-
-    if (withToken && token) {
-      headers['Authorization'] = `Bearer ${token}`;
+  if (error.response) {
+    // Check if the API provided a specific error message
+    if (error.response.data && (error.response.data as any).message) {
+      errorMessage = (error.response.data as any).message; // Detailed API message
+    } else {
+      // Handle specific HTTP error codes if no message provided
+      switch (error.response.status) {
+        case 401:
+          errorMessage = 'Unauthorized - Please check your credentials.';
+          break;
+        case 403:
+          errorMessage = 'Forbidden - You do not have access.';
+          break;
+        case 404:
+          errorMessage = 'Resource not found.';
+          break;
+        default:
+          errorMessage = 'An unexpected server error occurred.';
+      }
     }
+  } else if (error.request) {
+    // No response received
+    errorMessage = 'No response from the server. Please try again.';
+  } else {
+    // Request setup issue
+    errorMessage = error.message;
+  }
 
-    return axios.post(url, data, { headers });
-  },
+  // Return error object with a custom message
+  return Promise.reject({ ...error, message: errorMessage });
+};
 
-  patch: (path: string, data: any, withToken = true) => {
+const client = {
+  // GET request with optional token
+  get: async (path: string, withToken: boolean = true): Promise<any> => {
     const url = `${host}${path}`;
-    const token = localStorage.getItem(tokenKey);
-    let headers: Record<string, string> = {};
+    const headers = withToken ? getAuthHeaders() : {};
 
-    if (withToken && token) {
-      headers['Authorization'] = `Bearer ${token}`;
+    try {
+      const response = await axios.get(url, { headers });
+      return response.data;
+    } catch (error) {
+      return handleError(error as AxiosError);
     }
-
-    return axios.patch(url, data, { headers });
   },
 
-  delete: (path: string) => {
+  // POST request with optional token
+  post: async (path: string, data: any, withToken: boolean = true): Promise<any> => {
     const url = `${host}${path}`;
-    const headers = {
-      Authorization: `Bearer ${localStorage.getItem(tokenKey)}`,
-    };
+    const headers = withToken ? getAuthHeaders() : {};
 
-    return axios.delete(url, { headers });
+    try {
+      const response = await axios.post(url, data, { headers });
+      return response.data;
+    } catch (error) {
+      return handleError(error as AxiosError);
+    }
+  },
+
+  // PATCH request with optional token
+  patch: async (path: string, data: any, withToken: boolean = true): Promise<any> => {
+    const url = `${host}${path}`;
+    const headers = withToken ? getAuthHeaders() : {};
+
+    try {
+      const response = await axios.patch(url, data, { headers });
+      return response.data;
+    } catch (error) {
+      return handleError(error as AxiosError);
+    }
+  },
+
+  // DELETE request with optional token
+  delete: async (path: string, withToken: boolean = true): Promise<any> => {
+    const url = `${host}${path}`;
+    const headers = withToken ? getAuthHeaders() : {};
+
+    try {
+      const response = await axios.delete(url, { headers });
+      return response.data;
+    } catch (error) {
+      return handleError(error as AxiosError);
+    }
   },
 };
 
